@@ -1,3 +1,4 @@
 <Solution>
-  <Project Path="Project_UTNGolMundial/Project_UTNGolMundial.csproj" />
+  <Project Path="Project_UTNGolMundial/MiApi.UTNGolMundial.csproj" />
+  <Project Path="UTNGolMundial.Modelos/UTNGolMundial.Modelos.csproj" Id="b1ca03f5-35f8-4bf9-bfd1-5f98335938fe" />
 </Solution>
