@@ -32,6 +32,8 @@ namespace UTNGolMundial.Modelos
 
         [ForeignKey("SeleccionVisitante")]
         public int SeleccionVisitante { get; set; } //Clave foranea para relacionar con Seleccion
+
+        //Relaciones
         public Fase? Fase { get; set; } //Relacion muchos a uno con Fase, muchos partidos pueden pertenecer a una fase, objeto de navegacion.
 
         
