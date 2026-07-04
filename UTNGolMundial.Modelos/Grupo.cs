@@ -14,7 +14,7 @@ namespace UTNGolMundial.Modelos
         public char Nombre { get; set; }
 
         //Relacion 
-        public List<Seleccion>? Seleccion { get; set; } //Relacion uno a muchos con Seleccion, un grupo puede tener muchas selecciones
-        public List<Partido>? Partido { get; set; } //Relacion uno a muchos con Partido, un grupo puede tener muchos partidos
+        public List<Seleccion>? Selecciones { get; set; } //Relacion uno a muchos con Seleccion, un grupo puede tener muchas selecciones
+        public List<Partido>? Partidos { get; set; } //Relacion uno a muchos con Partido, un grupo puede tener muchos partidos
     }
 }

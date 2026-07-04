@@ -27,22 +27,17 @@ namespace UTNGolMundial.Modelos
         [ForeignKey("SedeId")]
         public int SedeId { get; set; } //Clave foranea para relacionar con Sede
 
-        [ForeignKey("SeleccionLocal")]
-        public int SeleccionLocal { get; set; } //Clave foranea para relacionar con Seleccion
+        [ForeignKey("LocalId")]
+        public int LocalId { get; set; } //Clave foranea para relacionar con Seleccion
 
-        [ForeignKey("SeleccionVisitante")]
-        public int SeleccionVisitante { get; set; } //Clave foranea para relacionar con Seleccion
+        [ForeignKey("VisitanteId")]
+        public int VisitanteId { get; set; } //Clave foranea para relacionar con Seleccion
 
-        //Relaciones
-        public Fase? Fase { get; set; } //Relacion muchos a uno con Fase, muchos partidos pueden pertenecer a una fase, objeto de navegacion.
-
-        
-        public Grupo? Grupo { get; set; } //Relacion muchos a uno con Grupo, muchos partidos pueden pertenecer a un grupo, objeto de navegacion.
-        
-        public Sede? Sede { get; set; } //Relacion muchos a uno con Sede, muchos partidos pueden pertenecer a una sede, objeto de navegacion.
-        
-        public Seleccion? Local { get; set; } //Relacion muchos a uno con Seleccion, muchos partidos pueden tener una seleccion local, objeto de navegacion.
-        
-        public Seleccion? Visitante { get; set; } //Relacion muchos a uno con Seleccion, muchos partidos pueden tener una seleccion visitante, objeto de navegacion.
+        //Relaciones y objetos de navegacion
+        public Fase? Fase { get; set; } //Relacion muchos a uno con Fase, muchos partidos pueden pertenecer a una fase
+        public Grupo? Grupo { get; set; } //Relacion muchos a uno con Grupo, muchos partidos pueden pertenecer a un grupo
+        public Sede? Sede { get; set; } //Relacion muchos a uno con Sede, muchos partidos pueden pertenecer a una sede
+        public Seleccion? Local { get; set; } //Relacion muchos a uno con Seleccion, muchos partidos pueden tener una seleccion local
+        public Seleccion? Visitante { get; set; } //Relacion muchos a uno con Seleccion, muchos partidos pueden tener una seleccion visitante
     }
 }

@@ -17,6 +17,6 @@ namespace UTNGolMundial.Modelos
         public int Orden { get; set; }
 
         //Relacion
-        public List<Partido>? Partido { get; set; } //Relacion uno a muchos con Partido, una fase puede tener muchos partidos
+        public List<Partido>? Partidos { get; set; } //Relacion uno a muchos con Partido, una fase puede tener muchos partidos
     }
 }
