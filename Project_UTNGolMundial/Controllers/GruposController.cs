@@ -28,11 +28,13 @@ namespace Project_UTNGolMundial.Controllers
             return await _context.Grupos.ToListAsync();
         }
 
-        // GET: api/Grupos/5
+        // GET: api/Grupos/A
         [HttpGet("{id}")]
-        public async Task<ActionResult<Grupo>> GetGrupo(int id)
+        public async Task<ActionResult<Grupo>> GetGrupo(string id)
         {
-            var grupo = await _context.Grupos.FindAsync(id);
+            // Extraemos el primer caracter del string recibido en la URL
+            char codigo = id.FirstOrDefault();
+            var grupo = await _context.Grupos.FindAsync(codigo);
 
             if (grupo == null)
             {
@@ -42,11 +44,13 @@ namespace Project_UTNGolMundial.Controllers
             return grupo;
         }
 
-        // PUT: api/Grupos/5
+        // PUT: api/Grupos/A
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutGrupo(int id, Grupo grupo)
+        public async Task<IActionResult> PutGrupo(string id, Grupo grupo)
         {
-            if (id != grupo.Codigo) // Grupo usa 'Codigo' como Key
+            char codigo = id.FirstOrDefault();
+
+            if (codigo != grupo.Codigo)
             {
                 return BadRequest();
             }
@@ -59,7 +63,7 @@ namespace Project_UTNGolMundial.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!GrupoExists(id))
+                if (!GrupoExists(codigo))
                 {
                     return NotFound();
                 }
@@ -82,11 +86,12 @@ namespace Project_UTNGolMundial.Controllers
             return CreatedAtAction("GetGrupo", new { id = grupo.Codigo }, grupo);
         }
 
-        // DELETE: api/Grupos/5
+        // DELETE: api/Grupos/A
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteGrupo(int id)
+        public async Task<IActionResult> DeleteGrupo(string id)
         {
-            var grupo = await _context.Grupos.FindAsync(id);
+            char codigo = id.FirstOrDefault();
+            var grupo = await _context.Grupos.FindAsync(codigo);
             if (grupo == null)
             {
                 return NotFound();
@@ -98,7 +103,7 @@ namespace Project_UTNGolMundial.Controllers
             return NoContent();
         }
 
-        private bool GrupoExists(int id)
+        private bool GrupoExists(char id)
         {
             return _context.Grupos.Any(e => e.Codigo == id);
         }

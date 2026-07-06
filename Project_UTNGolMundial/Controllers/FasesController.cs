@@ -28,9 +28,9 @@ namespace Project_UTNGolMundial.Controllers
             return await _context.Fases.ToListAsync();
         }
 
-        // GET: api/Fases/5
+        // GET: api/Fases/GRUPOS
         [HttpGet("{id}")]
-        public async Task<ActionResult<Fase>> GetFase(int id)
+        public async Task<ActionResult<Fase>> GetFase(string id)
         {
             var fase = await _context.Fases.FindAsync(id);
 
@@ -42,11 +42,11 @@ namespace Project_UTNGolMundial.Controllers
             return fase;
         }
 
-        // PUT: api/Fases/5
+        // PUT: api/Fases/GRUPOS
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutFase(int id, Fase fase)
+        public async Task<IActionResult> PutFase(string id, Fase fase)
         {
-            if (id != fase.Codigo) // Fase usa 'Codigo' como Key
+            if (id != fase.Codigo) // Fase usa 'Codigo' como Key de tipo string
             {
                 return BadRequest();
             }
@@ -82,9 +82,9 @@ namespace Project_UTNGolMundial.Controllers
             return CreatedAtAction("GetFase", new { id = fase.Codigo }, fase);
         }
 
-        // DELETE: api/Fases/5
+        // DELETE: api/Fases/GRUPOS
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteFase(int id)
+        public async Task<IActionResult> DeleteFase(string id)
         {
             var fase = await _context.Fases.FindAsync(id);
             if (fase == null)
@@ -98,7 +98,7 @@ namespace Project_UTNGolMundial.Controllers
             return NoContent();
         }
 
-        private bool FaseExists(int id)
+        private bool FaseExists(string id)
         {
             return _context.Fases.Any(e => e.Codigo == id);
         }
