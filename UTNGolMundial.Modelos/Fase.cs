@@ -10,7 +10,7 @@ namespace UTNGolMundial.Modelos
     public class Fase
     {
         [Key]
-        public int Codigo { get; set; }
+        public string Codigo { get; set; }
         public string Nombre { get; set; }
         public DateOnly FechaInicio { get; set; }
         public DateOnly FechaFin { get; set; }

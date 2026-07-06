@@ -12,7 +12,7 @@ using Project_UTNGolMundial.Data;
 namespace MiApi.UTNGolMundial.Migrations
 {
     [DbContext(typeof(MiApiUTNGolMundialContext))]
-    [Migration("20260705045136_V01")]
+    [Migration("20260706000302_V01")]
     partial class V01
     {
         /// <inheritdoc />

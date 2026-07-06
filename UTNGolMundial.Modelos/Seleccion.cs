@@ -20,7 +20,7 @@ namespace UTNGolMundial.Modelos
         public string clasificacion { get; set; }
 
         [ForeignKey("GrupoCodigo")]
-        public int GrupoCodigo { get; set; } //Clave foranea para relacionar con Grupo
+        public char GrupoCodigo { get; set; } //Clave foranea para relacionar con Grupo
         public Grupo? Grupo { get; set; } //Relacion muchos a uno con Grupo, muchas selecciones pueden pertenecer a un grupo, objeto de navegacion.
 
     }

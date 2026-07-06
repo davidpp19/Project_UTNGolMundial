@@ -10,8 +10,8 @@ namespace UTNGolMundial.Modelos
     public class Grupo
     {
         [Key]
-        public int Codigo { get; set; }
-        public char Nombre { get; set; }
+        public char Codigo { get; set; }
+        public string Nombre { get; set; }
 
         //Relacion 
         public List<Seleccion>? Selecciones { get; set; } //Relacion uno a muchos con Seleccion, un grupo puede tener muchas selecciones

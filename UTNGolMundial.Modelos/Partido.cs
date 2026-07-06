@@ -14,15 +14,15 @@ namespace UTNGolMundial.Modelos
         public int Id { get; set; }
         public int NumeroPartidoFifa { get; set; }
         public DateTime FechaPartido { get; set; }
-        public Boolean Estado { get; set; }
+        public string Estado { get; set; }
         public int GolesLocal { get; set; }
         public int GolesVisitante { get; set; }
 
         [ForeignKey("FaseCodigo")]
-        public int FaseCodigo { get; set; } //Clave foranea para relacionar con Fase
+        public string FaseCodigo { get; set; } //Clave foranea para relacionar con Fase
 
         [ForeignKey("GrupoCodigo")]
-        public int GrupoCodigo { get; set; } //Clave foranea para relacionar con Grupo
+        public char GrupoCodigo { get; set; } //Clave foranea para relacionar con Grupo
 
         [ForeignKey("SedeId")]
         public int SedeId { get; set; } //Clave foranea para relacionar con Sede
