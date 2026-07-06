@@ -16,8 +16,7 @@ namespace MiApi.UTNGolMundial.Migrations
                 name: "Fases",
                 columns: table => new
                 {
-                    Codigo = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Codigo = table.Column<string>(type: "text", nullable: false),
                     Nombre = table.Column<string>(type: "text", nullable: false),
                     FechaInicio = table.Column<DateOnly>(type: "date", nullable: false),
                     FechaFin = table.Column<DateOnly>(type: "date", nullable: false),
@@ -32,9 +31,8 @@ namespace MiApi.UTNGolMundial.Migrations
                 name: "Grupos",
                 columns: table => new
                 {
-                    Codigo = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Nombre = table.Column<char>(type: "character(1)", nullable: false)
+                    Codigo = table.Column<char>(type: "character(1)", nullable: false),
+                    Nombre = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -68,7 +66,7 @@ namespace MiApi.UTNGolMundial.Migrations
                     Confederacion = table.Column<string>(type: "text", nullable: false),
                     EsAnfitrion = table.Column<bool>(type: "boolean", nullable: false),
                     clasificacion = table.Column<string>(type: "text", nullable: false),
-                    GrupoCodigo = table.Column<int>(type: "integer", nullable: false)
+                    GrupoCodigo = table.Column<char>(type: "character(1)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -89,11 +87,11 @@ namespace MiApi.UTNGolMundial.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     NumeroPartidoFifa = table.Column<int>(type: "integer", nullable: false),
                     FechaPartido = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    Estado = table.Column<bool>(type: "boolean", nullable: false),
+                    Estado = table.Column<string>(type: "text", nullable: false),
                     GolesLocal = table.Column<int>(type: "integer", nullable: false),
                     GolesVisitante = table.Column<int>(type: "integer", nullable: false),
-                    FaseCodigo = table.Column<int>(type: "integer", nullable: false),
-                    GrupoCodigo = table.Column<int>(type: "integer", nullable: false),
+                    FaseCodigo = table.Column<string>(type: "text", nullable: false),
+                    GrupoCodigo = table.Column<char>(type: "character(1)", nullable: false),
                     SedeId = table.Column<int>(type: "integer", nullable: false),
                     LocalId = table.Column<int>(type: "integer", nullable: false),
                     VisitanteId = table.Column<int>(type: "integer", nullable: false)

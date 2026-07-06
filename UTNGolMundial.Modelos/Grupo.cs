@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ namespace UTNGolMundial.Modelos
     public class Grupo
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public char Codigo { get; set; }
         public string Nombre { get; set; }
 

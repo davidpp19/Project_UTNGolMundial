@@ -12,7 +12,7 @@ using Project_UTNGolMundial.Data;
 namespace MiApi.UTNGolMundial.Migrations
 {
     [DbContext(typeof(MiApiUTNGolMundialContext))]
-    [Migration("20260706000302_V01")]
+    [Migration("20260706003615_V01")]
     partial class V01
     {
         /// <inheritdoc />
@@ -27,11 +27,8 @@ namespace MiApi.UTNGolMundial.Migrations
 
             modelBuilder.Entity("UTNGolMundial.Modelos.Fase", b =>
                 {
-                    b.Property<int>("Codigo")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Codigo"));
+                    b.Property<string>("Codigo")
+                        .HasColumnType("text");
 
                     b.Property<DateOnly>("FechaFin")
                         .HasColumnType("date");
@@ -53,14 +50,12 @@ namespace MiApi.UTNGolMundial.Migrations
 
             modelBuilder.Entity("UTNGolMundial.Modelos.Grupo", b =>
                 {
-                    b.Property<int>("Codigo")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Codigo"));
-
-                    b.Property<char>("Nombre")
+                    b.Property<char>("Codigo")
                         .HasColumnType("character(1)");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Codigo");
 
@@ -75,11 +70,13 @@ namespace MiApi.UTNGolMundial.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("Estado")
-                        .HasColumnType("boolean");
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("text");
 
-                    b.Property<int>("FaseCodigo")
-                        .HasColumnType("integer");
+                    b.Property<string>("FaseCodigo")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("FechaPartido")
                         .HasColumnType("timestamp without time zone");
@@ -90,8 +87,8 @@ namespace MiApi.UTNGolMundial.Migrations
                     b.Property<int>("GolesVisitante")
                         .HasColumnType("integer");
 
-                    b.Property<int>("GrupoCodigo")
-                        .HasColumnType("integer");
+                    b.Property<char>("GrupoCodigo")
+                        .HasColumnType("character(1)");
 
                     b.Property<int>("LocalId")
                         .HasColumnType("integer");
@@ -167,8 +164,8 @@ namespace MiApi.UTNGolMundial.Migrations
                     b.Property<bool>("EsAnfitrion")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("GrupoCodigo")
-                        .HasColumnType("integer");
+                    b.Property<char>("GrupoCodigo")
+                        .HasColumnType("character(1)");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
