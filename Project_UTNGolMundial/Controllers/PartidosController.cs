@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Project_UTNGolMundial.Data;
+using Project_UTNGolMundial.DTOs;
+using Project_UTNGolMundial.Services;
 using UTNGolMundial.Modelos;
 
 namespace Project_UTNGolMundial.Controllers
@@ -15,10 +17,12 @@ namespace Project_UTNGolMundial.Controllers
     public class PartidosController : ControllerBase
     {
         private readonly MiApiUTNGolMundialContext _context;
+        private readonly IPartidoResultadoService _resultadoService;
 
-        public PartidosController(MiApiUTNGolMundialContext context)
+        public PartidosController(MiApiUTNGolMundialContext context, IPartidoResultadoService resultadoService)
         {
             _context = context;
+            _resultadoService = resultadoService;
         }
 
         // GET: api/Partidos
@@ -96,6 +100,50 @@ namespace Project_UTNGolMundial.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        // ──────────────────────────────────────────────
+        // RF11 — Registrar resultado oficial de un partido
+        // RF12 — Notificación automática al servicio UTNGolCoin
+        // ──────────────────────────────────────────────
+
+        /// <summary>
+        /// Registra el marcador oficial de un partido.
+        /// Crea automáticamente un registro de auditoría y notifica al servicio UTNGolCoin.
+        /// </summary>
+        /// <param name="id">ID del partido.</param>
+        /// <param name="dto">Goles local, goles visitante y UsuarioId del administrador.</param>
+        // PUT: api/Partidos/5/resultado
+        [HttpPut("{id}/resultado")]
+        public async Task<IActionResult> RegistrarResultado(int id, [FromBody] RegistrarResultadoDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            try
+            {
+                var partido = await _resultadoService.RegistrarResultadoAsync(id, dto);
+
+                if (partido == null)
+                    return NotFound(new { mensaje = $"No se encontró el partido con Id {id}." });
+
+                return Ok(new
+                {
+                    mensaje = "Resultado registrado exitosamente.",
+                    partido = new
+                    {
+                        partido.Id,
+                        partido.NumeroPartidoFifa,
+                        partido.GolesLocal,
+                        partido.GolesVisitante,
+                        partido.Estado
+                    }
+                });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message });
+            }
         }
 
         private bool PartidoExists(int id)

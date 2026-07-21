@@ -1,4 +1,5 @@
 using Project_UTNGolMundial.Data;
+using Project_UTNGolMundial.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -24,6 +25,21 @@ namespace MiApi.UTNGolMundial
             builder.Services.AddOpenApi();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            // Servicios de negocio (Estadísticas y Registro de Resultados) 
+            builder.Services.AddScoped<IEstadisticasService, EstadisticasService>();
+            builder.Services.AddScoped<IPartidoResultadoService, PartidoResultadoService>();
+
+            // HTTP Client para API Consumer — Servicio UTNGolCoin (RF12) 
+            // La URL base se configura en appsettings.json : ServiciosExternos:UTNGolCoinUrl
+            builder.Services.AddHttpClient<IUtnGolCoinClient, UtnGolCoinClient>(client =>
+            {
+                client.BaseAddress = new Uri(
+                    builder.Configuration["ServiciosExternos:UTNGolCoinUrl"]
+                    ?? "https://localhost:7053");
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+            });
+
             var app = builder.Build();
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
