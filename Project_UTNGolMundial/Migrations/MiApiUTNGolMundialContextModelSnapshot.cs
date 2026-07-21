@@ -22,6 +22,46 @@ namespace MiApi.UTNGolMundial.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("UTNGolMundial.Modelos.Auditoria", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("DatosAnteriores")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("DatosNuevos")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("RegistroId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("TablaAfectada")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TipoAccionAuditoria")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("Auditorias");
+                });
+
             modelBuilder.Entity("UTNGolMundial.Modelos.Fase", b =>
                 {
                     b.Property<string>("Codigo")
@@ -114,6 +154,31 @@ namespace MiApi.UTNGolMundial.Migrations
                     b.ToTable("Partidos");
                 });
 
+            modelBuilder.Entity("UTNGolMundial.Modelos.Rol", b =>
+                {
+                    b.Property<short>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("smallint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<short>("Id"));
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Permisos")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+                });
+
             modelBuilder.Entity("UTNGolMundial.Modelos.Sede", b =>
                 {
                     b.Property<int>("Id")
@@ -179,6 +244,57 @@ namespace MiApi.UTNGolMundial.Migrations
                     b.ToTable("Selecciones");
                 });
 
+            modelBuilder.Entity("UTNGolMundial.Modelos.Usuario", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Activo")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("FechaRegistro")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Mail")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<short>("RolId")
+                        .HasColumnType("smallint");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RolId");
+
+                    b.ToTable("Usuarios");
+                });
+
+            modelBuilder.Entity("UTNGolMundial.Modelos.Auditoria", b =>
+                {
+                    b.HasOne("UTNGolMundial.Modelos.Usuario", "Usuario")
+                        .WithMany("Auditorias")
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("UTNGolMundial.Modelos.Partido", b =>
                 {
                     b.HasOne("UTNGolMundial.Modelos.Fase", "Fase")
@@ -233,6 +349,17 @@ namespace MiApi.UTNGolMundial.Migrations
                     b.Navigation("Grupo");
                 });
 
+            modelBuilder.Entity("UTNGolMundial.Modelos.Usuario", b =>
+                {
+                    b.HasOne("UTNGolMundial.Modelos.Rol", "Rol")
+                        .WithMany("Usuarios")
+                        .HasForeignKey("RolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Rol");
+                });
+
             modelBuilder.Entity("UTNGolMundial.Modelos.Fase", b =>
                 {
                     b.Navigation("Partidos");
@@ -245,9 +372,19 @@ namespace MiApi.UTNGolMundial.Migrations
                     b.Navigation("Selecciones");
                 });
 
+            modelBuilder.Entity("UTNGolMundial.Modelos.Rol", b =>
+                {
+                    b.Navigation("Usuarios");
+                });
+
             modelBuilder.Entity("UTNGolMundial.Modelos.Sede", b =>
                 {
                     b.Navigation("Partidos");
+                });
+
+            modelBuilder.Entity("UTNGolMundial.Modelos.Usuario", b =>
+                {
+                    b.Navigation("Auditorias");
                 });
 #pragma warning restore 612, 618
         }

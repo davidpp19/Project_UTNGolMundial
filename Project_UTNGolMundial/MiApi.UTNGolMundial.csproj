@@ -30,4 +30,8 @@
     <ProjectReference Include="..\UTNGolMundial.Modelos\UTNGolMundial.Modelos.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>
