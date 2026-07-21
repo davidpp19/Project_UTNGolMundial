@@ -3,6 +3,7 @@ using Project_UTNGolMundial.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using UTNGolMundial.Consumer;
 
 namespace MiApi.UTNGolMundial
 {
@@ -30,8 +31,10 @@ namespace MiApi.UTNGolMundial
             builder.Services.AddScoped<IEstadisticasService, EstadisticasService>();
             builder.Services.AddScoped<IPartidoResultadoService, PartidoResultadoService>();
 
-            // HTTP Client para API Consumer — Servicio UTNGolCoin (RF12) 
+            // HTTP Client — Servicio UTNGolCoin (RF12) 
+            // Registra el Typed Client del proyecto UTNGolMundial.Consumer.
             // La URL base se configura en appsettings.json : ServiciosExternos:UTNGolCoinUrl
+            // IUtnGolCoinClient y UtnGolCoinClient provienen de UTNGolMundial.Consumer.
             builder.Services.AddHttpClient<IUtnGolCoinClient, UtnGolCoinClient>(client =>
             {
                 client.BaseAddress = new Uri(

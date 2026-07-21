@@ -28,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\UTNGolMundial.Consumer\UTNGolMundial.Consumer.csproj" />
     <ProjectReference Include="..\UTNGolMundial.Modelos\UTNGolMundial.Modelos.csproj" />
   </ItemGroup>
 

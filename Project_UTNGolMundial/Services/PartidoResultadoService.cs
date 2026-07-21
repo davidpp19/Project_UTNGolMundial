@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Project_UTNGolMundial.Data;
 using Project_UTNGolMundial.DTOs;
+using UTNGolMundial.Consumer;
 using UTNGolMundial.Modelos;
 
 namespace Project_UTNGolMundial.Services
@@ -86,8 +87,9 @@ namespace Project_UTNGolMundial.Services
                 "Resultado registrado para partido {PartidoId}: Local {GolesLocal} - Visitante {GolesVisitante}. Auditoría creada.",
                 partidoId, dto.GolesLocal, dto.GolesVisitante);
 
-            // 8. Notificar al Servicio UTNGolCoin (RF12) — después de confirmar la persistencia
-            var notificacion = new NotificacionResultadoDto
+            // 8. Notificar al Servicio UTNGolCoin (RF12) — mediante el proyecto Consumer
+            // Se construye el DTO del Consumer (UTNGolMundial.Consumer.NotificacionResultadoDto)
+            var notificacion = new UTNGolMundial.Consumer.NotificacionResultadoDto
             {
                 PartidoId = partido.Id,
                 GolesLocal = partido.GolesLocal,
