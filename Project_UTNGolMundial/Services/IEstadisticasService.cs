@@ -14,5 +14,8 @@ namespace Project_UTNGolMundial.Services
 
         // Obtiene las estadísticas acumuladas de una selección específica (RF07).
         Task<EstadisticaSeleccionDto?> ObtenerEstadisticaSeleccionAsync(int seleccionId);
+
+        // Obtiene las estadísticas acumuladas de TODAS las selecciones (RF07 extendido).
+        Task<List<EstadisticaSeleccionDto>> ObtenerEstadisticasTodasSeleccionesAsync();
     }
 }

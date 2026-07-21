@@ -171,6 +171,67 @@ namespace Project_UTNGolMundial.Services
             };
         }
 
+        // RF07 extendido : Estadísticas para todas las selecciones (para llenar tabla completa sin múltiples llamadas)
+        public async Task<List<EstadisticaSeleccionDto>> ObtenerEstadisticasTodasSeleccionesAsync()
+        {
+            var selecciones = await _context.Selecciones.AsNoTracking().ToListAsync();
+            var partidos = await _context.Partidos
+                .Where(p => p.Estado == "Finalizado")
+                .AsNoTracking()
+                .ToListAsync();
+
+            var resultados = new List<EstadisticaSeleccionDto>();
+
+            foreach (var seleccion in selecciones)
+            {
+                var partidosSeleccion = partidos.Where(p => p.LocalId == seleccion.Id || p.VisitanteId == seleccion.Id).ToList();
+                int ganados = 0, empatados = 0, perdidos = 0, gf = 0, gc = 0;
+
+                foreach (var p in partidosSeleccion)
+                {
+                    if (p.LocalId == seleccion.Id)
+                    {
+                        gf += p.GolesLocal.Value;
+                        gc += p.GolesVisitante.Value;
+
+                        if (p.GolesLocal.Value > p.GolesVisitante.Value) ganados++;
+                        else if (p.GolesLocal.Value == p.GolesVisitante.Value) empatados++;
+                        else perdidos++;
+                    }
+                    else // Visitante
+                    {
+                        gf += p.GolesVisitante.Value;
+                        gc += p.GolesLocal.Value;
+
+                        if (p.GolesVisitante.Value > p.GolesLocal.Value) ganados++;
+                        else if (p.GolesVisitante.Value == p.GolesLocal.Value) empatados++;
+                        else perdidos++;
+                    }
+                }
+
+                resultados.Add(new EstadisticaSeleccionDto
+                {
+                    SeleccionId = seleccion.Id,
+                    Nombre = seleccion.Nombre,
+                    CodigoFifa = seleccion.CodigoFifa,
+                    Confederacion = seleccion.Confederacion,
+                    PartidosJugados = partidosSeleccion.Count,
+                    Ganados = ganados,
+                    Empatados = empatados,
+                    Perdidos = perdidos,
+                    GolesAFavor = gf,
+                    GolesEnContra = gc,
+                    DiferenciaDeGoles = gf - gc
+                });
+            }
+
+            return resultados
+                .OrderByDescending(r => r.PartidosJugados)
+                .ThenByDescending(r => r.Ganados)
+                .ThenByDescending(r => r.DiferenciaDeGoles)
+                .ToList();
+        }
+
         // Método auxiliar: calcula PJ/PG/PE/PP/GF/GC/DG/Pts
         // para una selección dentro de una lista de partidos.
         private PosicionSeleccionDto CalcularEstadisticas(int seleccionId, List<Partido> partidos)
