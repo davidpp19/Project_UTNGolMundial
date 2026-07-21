@@ -32,8 +32,8 @@ namespace Project_UTNGolMundial.DTOs
         public string VisitanteNombre { get; set; } = string.Empty;
         public string VisitanteCodigoFifa { get; set; } = string.Empty;
 
-        // Resultado (0 si aún no se jugó; verificar Estado para distinguir)
-        public int GolesLocal { get; set; }
-        public int GolesVisitante { get; set; }
+        // Resultado (null si aún no se jugó)
+        public int? GolesLocal { get; set; }
+        public int? GolesVisitante { get; set; }
     }
 }

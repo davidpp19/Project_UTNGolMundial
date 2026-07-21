@@ -137,20 +137,20 @@ namespace Project_UTNGolMundial.Services
             {
                 if (p.LocalId == seleccionId)
                 {
-                    gf += p.GolesLocal;
-                    gc += p.GolesVisitante;
+                    gf += p.GolesLocal.Value;
+                    gc += p.GolesVisitante.Value;
 
-                    if (p.GolesLocal > p.GolesVisitante) ganados++;
-                    else if (p.GolesLocal == p.GolesVisitante) empatados++;
+                    if (p.GolesLocal.Value > p.GolesVisitante.Value) ganados++;
+                    else if (p.GolesLocal.Value == p.GolesVisitante.Value) empatados++;
                     else perdidos++;
                 }
                 else // Visitante
                 {
-                    gf += p.GolesVisitante;
-                    gc += p.GolesLocal;
+                    gf += p.GolesVisitante.Value;
+                    gc += p.GolesLocal.Value;
 
-                    if (p.GolesVisitante > p.GolesLocal) ganados++;
-                    else if (p.GolesVisitante == p.GolesLocal) empatados++;
+                    if (p.GolesVisitante.Value > p.GolesLocal.Value) ganados++;
+                    else if (p.GolesVisitante.Value == p.GolesLocal.Value) empatados++;
                     else perdidos++;
                 }
             }
@@ -192,20 +192,20 @@ namespace Project_UTNGolMundial.Services
 
                 if (esLocal)
                 {
-                    gf += p.GolesLocal;
-                    gc += p.GolesVisitante;
+                    gf += p.GolesLocal.Value;
+                    gc += p.GolesVisitante.Value;
 
-                    if (p.GolesLocal > p.GolesVisitante) pg++;
-                    else if (p.GolesLocal == p.GolesVisitante) pe++;
+                    if (p.GolesLocal.Value > p.GolesVisitante.Value) pg++;
+                    else if (p.GolesLocal.Value == p.GolesVisitante.Value) pe++;
                     else pp++;
                 }
                 else
                 {
-                    gf += p.GolesVisitante;
-                    gc += p.GolesLocal;
+                    gf += p.GolesVisitante.Value;
+                    gc += p.GolesLocal.Value;
 
-                    if (p.GolesVisitante > p.GolesLocal) pg++;
-                    else if (p.GolesVisitante == p.GolesLocal) pe++;
+                    if (p.GolesVisitante.Value > p.GolesLocal.Value) pg++;
+                    else if (p.GolesVisitante.Value == p.GolesLocal.Value) pe++;
                     else pp++;
                 }
             }

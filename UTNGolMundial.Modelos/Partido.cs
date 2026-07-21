@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -15,8 +15,8 @@ namespace UTNGolMundial.Modelos
         public int NumeroPartidoFifa { get; set; }
         public DateTime FechaPartido { get; set; }
         public string Estado { get; set; }
-        public int GolesLocal { get; set; }
-        public int GolesVisitante { get; set; }
+        public int? GolesLocal { get; set; }
+        public int? GolesVisitante { get; set; }
 
         [ForeignKey("FaseCodigo")]
         public string FaseCodigo { get; set; } //Clave foranea para relacionar con Fase

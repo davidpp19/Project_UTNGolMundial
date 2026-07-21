@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,12 +12,12 @@ namespace UTNGolMundial.Modelos
     {
         [Key]
         public int Id { get; set; }
-
         public string CodigoFifa { get; set; }
         public string Nombre { get; set; }
         public string Confederacion { get; set; }
         public Boolean EsAnfitrion { get; set; }
         public string clasificacion { get; set; }
+        public bool Eliminada { get; set; } = false;
 
         [ForeignKey("GrupoCodigo")]
         public char GrupoCodigo { get; set; } //Clave foranea para relacionar con Grupo

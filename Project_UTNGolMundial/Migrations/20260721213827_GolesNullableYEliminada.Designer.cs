@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Project_UTNGolMundial.Data;
@@ -11,9 +12,11 @@ using Project_UTNGolMundial.Data;
 namespace MiApi.UTNGolMundial.Migrations
 {
     [DbContext(typeof(MiApiUTNGolMundialContext))]
-    partial class MiApiUTNGolMundialContextModelSnapshot : ModelSnapshot
+    [Migration("20260721213827_GolesNullableYEliminada")]
+    partial class GolesNullableYEliminada
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

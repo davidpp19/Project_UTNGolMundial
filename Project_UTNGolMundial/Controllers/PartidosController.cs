@@ -18,11 +18,16 @@ namespace Project_UTNGolMundial.Controllers
     {
         private readonly MiApiUTNGolMundialContext _context;
         private readonly IPartidoResultadoService _resultadoService;
+        private readonly IEstadisticasService _estadisticasService;
 
-        public PartidosController(MiApiUTNGolMundialContext context, IPartidoResultadoService resultadoService)
+        public PartidosController(
+            MiApiUTNGolMundialContext context, 
+            IPartidoResultadoService resultadoService,
+            IEstadisticasService estadisticasService)
         {
             _context = context;
             _resultadoService = resultadoService;
+            _estadisticasService = estadisticasService;
         }
 
         // GET: api/Partidos
@@ -30,6 +35,15 @@ namespace Project_UTNGolMundial.Controllers
         public async Task<ActionResult<IEnumerable<Partido>>> GetPartidos()
         {
             return await _context.Partidos.ToListAsync();
+        }
+
+        // GET: api/Partidos/calendario
+        [HttpGet("calendario")]
+        public async Task<ActionResult<List<CalendarioPartidoDto>>> GetCalendario()
+        {
+            // Reutilizamos la lógica del servicio de estadísticas
+            var calendario = await _estadisticasService.ObtenerCalendarioAsync();
+            return Ok(calendario);
         }
 
         // GET: api/Partidos/5
@@ -54,6 +68,15 @@ namespace Project_UTNGolMundial.Controllers
             {
                 return BadRequest();
             }
+
+            // Validación: Verificar que las selecciones no estén eliminadas
+            var local = await _context.Selecciones.FindAsync(partido.LocalId);
+            var visitante = await _context.Selecciones.FindAsync(partido.VisitanteId);
+
+            if (local != null && local.Eliminada)
+                return BadRequest(new { mensaje = $"La selección {local.Nombre} está eliminada del torneo." });
+            if (visitante != null && visitante.Eliminada)
+                return BadRequest(new { mensaje = $"La selección {visitante.Nombre} está eliminada del torneo." });
 
             _context.Entry(partido).State = EntityState.Modified;
 
@@ -80,6 +103,15 @@ namespace Project_UTNGolMundial.Controllers
         [HttpPost]
         public async Task<ActionResult<Partido>> PostPartido(Partido partido)
         {
+            // Validación: Verificar que las selecciones no estén eliminadas
+            var local = await _context.Selecciones.FindAsync(partido.LocalId);
+            var visitante = await _context.Selecciones.FindAsync(partido.VisitanteId);
+
+            if (local != null && local.Eliminada)
+                return BadRequest(new { mensaje = $"La selección {local.Nombre} está eliminada del torneo." });
+            if (visitante != null && visitante.Eliminada)
+                return BadRequest(new { mensaje = $"La selección {visitante.Nombre} está eliminada del torneo." });
+
             _context.Partidos.Add(partido);
             await _context.SaveChangesAsync();
 
@@ -101,18 +133,11 @@ namespace Project_UTNGolMundial.Controllers
 
             return NoContent();
         }
-
-        // ──────────────────────────────────────────────
         // RF11 — Registrar resultado oficial de un partido
         // RF12 — Notificación automática al servicio UTNGolCoin
-        // ──────────────────────────────────────────────
 
-        /// <summary>
-        /// Registra el marcador oficial de un partido.
-        /// Crea automáticamente un registro de auditoría y notifica al servicio UTNGolCoin.
-        /// </summary>
-        /// <param name="id">ID del partido.</param>
-        /// <param name="dto">Goles local, goles visitante y UsuarioId del administrador.</param>
+        // Registra el marcador oficial de un partido. Crea automáticamente un registro de auditoría y notifica al servicio UTNGolCoin.
+
         // PUT: api/Partidos/5/resultado
         [HttpPut("{id}/resultado")]
         public async Task<IActionResult> RegistrarResultado(int id, [FromBody] RegistrarResultadoDto dto)
