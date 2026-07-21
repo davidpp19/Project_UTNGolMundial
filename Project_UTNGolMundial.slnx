@@ -2,4 +2,5 @@
   <Project Path="Project_UTNGolMundial/MiApi.UTNGolMundial.csproj" />
   <Project Path="UTNGolMundial.Consumer/UTNGolMundial.Consumer.csproj" Id="40646c0b-19cb-47cb-a377-96a511b03233" />
   <Project Path="UTNGolMundial.Modelos/UTNGolMundial.Modelos.csproj" Id="b1ca03f5-35f8-4bf9-bfd1-5f98335938fe" />
+  <Project Path="UTNGolMundial.Test/UTNGolMundial.Test.csproj" Id="2b33de28-1007-4b1a-a7ba-668b470f710c" />
 </Solution>
