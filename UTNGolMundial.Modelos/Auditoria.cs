@@ -14,7 +14,7 @@ namespace UTNGolMundial.Modelos
         public long Id { get; set; }
         public string TablaAfectada { get; set; }
         public int RegistroId { get; set; }
-        public string Accion { get; set; }
+        public string TipoAccionAuditoria { get; set; }
         public string DatosAnteriores { get; set; }
         public string DatosNuevos { get; set; }
         public DateTime Fecha { get; set; }
