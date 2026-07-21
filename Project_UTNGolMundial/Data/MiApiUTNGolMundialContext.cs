@@ -19,5 +19,8 @@ namespace Project_UTNGolMundial.Data
         public DbSet<Partido> Partidos { get; set; } = default!;
         public DbSet<Sede> Sedes { get; set; } = default!;
         public DbSet<Seleccion> Selecciones { get; set; } = default!;
+        public DbSet<Usuario> Usuarios { get; set; } = default!;
+        public DbSet<Rol> Roles { get; set; } = default!;
+        public DbSet<Auditoria> Auditorias { get; set; } = default!;
     }
 }
