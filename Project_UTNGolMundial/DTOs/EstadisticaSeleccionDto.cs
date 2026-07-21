@@ -7,7 +7,7 @@ namespace Project_UTNGolMundial.DTOs
         public string Nombre { get; set; } = string.Empty;
         public string CodigoFifa { get; set; } = string.Empty;
         public string Confederacion { get; set; } = string.Empty;
-
+        public bool EsAnfitrion { get; set; }
         public int PartidosJugados { get; set; }
         public int Ganados { get; set; }
         public int Empatados { get; set; }
