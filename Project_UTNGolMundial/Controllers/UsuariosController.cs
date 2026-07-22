@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Project_UTNGolMundial.Data;
 using UTNGolMundial.Modelos;
+using Project_UTNGolMundial.DTOs;
 
 namespace Project_UTNGolMundial.Controllers
 {
@@ -23,23 +24,42 @@ namespace Project_UTNGolMundial.Controllers
 
         // GET: api/Usuarios
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Usuario>>> GetUsuarios()
+        public async Task<ActionResult<IEnumerable<UsuarioDto>>> GetUsuarios()
         {
-            return await _context.Usuarios.ToListAsync();
+            var usuarios = await _context.Usuarios.Include(u => u.Rol).ToListAsync();
+            var dtos = usuarios.Select(u => new UsuarioDto
+            {
+                Id = u.Id,
+                Username = u.Username,
+                Nombre = u.Nombre,
+                Email = u.Mail,
+                RolNombre = u.Rol?.Nombre.ToUpper() ?? "SIN ROL",
+                Activo = u.Activo
+            }).ToList();
+            
+            return Ok(dtos);
         }
 
         // GET: api/Usuarios/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Usuario>> GetUsuario(int id)
+        public async Task<ActionResult<UsuarioDto>> GetUsuario(int id)
         {
-            var usuario = await _context.Usuarios.FindAsync(id);
+            var usuario = await _context.Usuarios.Include(u => u.Rol).FirstOrDefaultAsync(u => u.Id == id);
 
             if (usuario == null)
             {
                 return NotFound();
             }
 
-            return usuario;
+            return new UsuarioDto
+            {
+                Id = usuario.Id,
+                Username = usuario.Username,
+                Nombre = usuario.Nombre,
+                Email = usuario.Mail,
+                RolNombre = usuario.Rol?.Nombre.ToUpper() ?? "SIN ROL",
+                Activo = usuario.Activo
+            };
         }
 
         // PUT: api/Usuarios/5
@@ -49,6 +69,12 @@ namespace Project_UTNGolMundial.Controllers
             if (id != usuario.Id)
             {
                 return BadRequest();
+            }
+
+            // Hashear si la contraseña viene en texto plano (BCrypt usa el prefijo $2)
+            if (!string.IsNullOrEmpty(usuario.Password) && !usuario.Password.StartsWith("$2"))
+            {
+                usuario.Password = BCrypt.Net.BCrypt.HashPassword(usuario.Password);
             }
 
             _context.Entry(usuario).State = EntityState.Modified;
@@ -76,6 +102,12 @@ namespace Project_UTNGolMundial.Controllers
         [HttpPost]
         public async Task<ActionResult<Usuario>> PostUsuario(Usuario usuario)
         {
+            // Hashear contraseña
+            if (!string.IsNullOrEmpty(usuario.Password) && !usuario.Password.StartsWith("$2"))
+            {
+                usuario.Password = BCrypt.Net.BCrypt.HashPassword(usuario.Password);
+            }
+
             _context.Usuarios.Add(usuario);
             await _context.SaveChangesAsync();
 

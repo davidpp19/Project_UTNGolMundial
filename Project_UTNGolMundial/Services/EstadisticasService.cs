@@ -72,7 +72,7 @@ namespace Project_UTNGolMundial.Services
 
             // Traer todos los partidos finalizados de fase de grupos
             var partidosFinalizados = await _context.Partidos
-                .Where(p => p.Estado == "Finalizado")
+                .Where(p => p.Estado == "FINALIZADO")
                 .AsNoTracking()
                 .ToListAsync();
 
@@ -126,7 +126,7 @@ namespace Project_UTNGolMundial.Services
 
             // Obtener TODOS los partidos finalizados de esta selección (grupos + eliminatorias)
             var partidos = await _context.Partidos
-                .Where(p => p.Estado == "Finalizado"
+                .Where(p => p.Estado == "FINALIZADO"
                     && (p.LocalId == seleccionId || p.VisitanteId == seleccionId))
                 .AsNoTracking()
                 .ToListAsync();
@@ -177,7 +177,7 @@ namespace Project_UTNGolMundial.Services
         {
             var selecciones = await _context.Selecciones.AsNoTracking().ToListAsync();
             var partidos = await _context.Partidos
-                .Where(p => p.Estado == "Finalizado")
+                .Where(p => p.Estado == "FINALIZADO")
                 .AsNoTracking()
                 .ToListAsync();
 
@@ -234,8 +234,7 @@ namespace Project_UTNGolMundial.Services
                 .ToList();
         }
 
-        // Método auxiliar: calcula PJ/PG/PE/PP/GF/GC/DG/Pts
-        // para una selección dentro de una lista de partidos.
+        // Método auxiliar: calcula PJ/PG/PE/PP/GF/GC/DG/Pts para una selección dentro de una lista de partidos.
         private PosicionSeleccionDto CalcularEstadisticas(int seleccionId, List<Partido> partidos)
         {
             var seleccion = _context.Selecciones

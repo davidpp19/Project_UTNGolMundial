@@ -39,7 +39,7 @@ namespace Project_UTNGolMundial.Services
             }
 
             // 2. Validar que no esté ya finalizado
-            if (partido.Estado == "Finalizado")
+            if (partido.Estado == "FINALIZADO")
             {
                 _logger.LogWarning("El partido {PartidoId} ya tiene un resultado registrado.", partidoId);
                 throw new InvalidOperationException(
@@ -57,7 +57,7 @@ namespace Project_UTNGolMundial.Services
             // 4. Registrar el resultado
             partido.GolesLocal = dto.GolesLocal;
             partido.GolesVisitante = dto.GolesVisitante;
-            partido.Estado = "Finalizado";
+            partido.Estado = "FINALIZADO";
 
             // 5. Capturar datos nuevos para la auditoría
             var datosNuevos = JsonConvert.SerializeObject(new
