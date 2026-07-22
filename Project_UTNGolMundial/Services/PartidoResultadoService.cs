@@ -111,9 +111,9 @@ namespace Project_UTNGolMundial.Services
         // Determina el resultado textual del partido para la notificación.
         private static string DeterminarResultado(int golesLocal, int golesVisitante)
         {
-            if (golesLocal > golesVisitante) return "Local";
-            if (golesVisitante > golesLocal) return "Visitante";
-            return "Empate";
+            if (golesLocal > golesVisitante) return "1";
+            if (golesVisitante > golesLocal) return "2";
+            return "X";
         }
     }
 }
