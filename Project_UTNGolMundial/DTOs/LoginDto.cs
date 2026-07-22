@@ -4,7 +4,7 @@ namespace Project_UTNGolMundial.DTOs
 {
     public class LoginDto
     {
-        [Required(ErrorMessage = "El nombre de usuario es obligatorio.")]
+        [Required(ErrorMessage = "El nombre de usuario o correo es obligatorio.")]
         public string Username { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "La contraseña es obligatoria.")]

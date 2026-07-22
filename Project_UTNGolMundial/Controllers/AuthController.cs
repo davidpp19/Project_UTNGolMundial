@@ -23,10 +23,10 @@ namespace Project_UTNGolMundial.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            // Buscar usuario por username incluyendo su Rol
+            // Buscar usuario por username o email incluyendo su Rol
             var usuario = await _context.Usuarios
                 .Include(u => u.Rol)
-                .FirstOrDefaultAsync(u => u.Username == loginDto.Username);
+                .FirstOrDefaultAsync(u => u.Username == loginDto.Username || u.Mail == loginDto.Username);
 
             if (usuario == null)
                 return Unauthorized(new { mensaje = "Credenciales inválidas." });
