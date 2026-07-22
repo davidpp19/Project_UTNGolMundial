@@ -115,7 +115,7 @@ namespace Project_UTNGolMundial.Controllers
             await _context.SaveChangesAsync();
 
             // Notificar registro al microservicio
-            await _utnGolCoinClient.NotificarRegistroAsync(usuario.Id, usuario.Username, usuario.Nombre, usuario.Activo);
+            await _utnGolCoinClient.NotificarRegistroAsync(usuario.Id, usuario.Username, usuario.Nombre, usuario.Mail, usuario.RolId, usuario.Activo);
 
             return CreatedAtAction("GetUsuario", new { id = usuario.Id }, usuario);
         }

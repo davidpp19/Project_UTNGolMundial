@@ -7,6 +7,6 @@ namespace UTNGolMundial.Consumer
         Task<bool> NotificarResultadoAsync(NotificacionResultadoDto notificacion);
 
         // Notifica el registro de un nuevo usuario
-        Task NotificarRegistroAsync(int id, string username, string nombre, bool activo);
+        Task NotificarRegistroAsync(int id, string username, string nombre, string email, short rolId, bool activo);
     }
 }

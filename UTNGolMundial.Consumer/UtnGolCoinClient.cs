@@ -72,7 +72,7 @@ namespace UTNGolMundial.Consumer
             }
         }
 
-        public async Task NotificarRegistroAsync(int id, string username, string nombre, bool activo)
+        public async Task NotificarRegistroAsync(int id, string username, string nombre, string email, short rolId, bool activo)
         {
             try
             {
@@ -82,6 +82,8 @@ namespace UTNGolMundial.Consumer
                     id = id,
                     username = username,
                     nombre = nombre,
+                    email = email,
+                    rolId = rolId,
                     activo = activo
                 };
 
