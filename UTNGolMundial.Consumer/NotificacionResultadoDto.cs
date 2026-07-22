@@ -6,13 +6,7 @@ namespace UTNGolMundial.Consumer
         // ID del partido finalizado
         public int PartidoId { get; set; }
 
-        // Goles marcados por el equipo local.
-        public int GolesLocal { get; set; }
-
-        // Goles marcados por el equipo visitante.
-        public int GolesVisitante { get; set; }
-
-        // Resultado del partido: "Local", "Visitante" o "Empate"
-        public string Resultado { get; set; } = string.Empty;
+        // Resultado final del partido
+        public string ResultadoFinal { get; set; } = string.Empty;
     }
 }

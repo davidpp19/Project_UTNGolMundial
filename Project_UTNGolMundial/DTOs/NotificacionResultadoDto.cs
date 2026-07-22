@@ -4,10 +4,8 @@ namespace Project_UTNGolMundial.DTOs
     public class NotificacionResultadoDto
     {
         public int PartidoId { get; set; }
-        public int GolesLocal { get; set; }
-        public int GolesVisitante { get; set; }
 
-        // Resultado del partido: "Local", "Visitante" o "Empate".
-        public string Resultado { get; set; } = string.Empty;
+        // Resultado final del partido
+        public string ResultadoFinal { get; set; } = string.Empty;
     }
 }

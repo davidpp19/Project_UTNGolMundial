@@ -28,11 +28,11 @@ namespace UTNGolMundial.Consumer
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 _logger.LogInformation(
-                    "[UTNGolCoin] Enviando notificación para Partido {PartidoId} — Resultado: {Resultado}",
-                    notificacion.PartidoId, notificacion.Resultado);
+                    "Enviando notificación para Partido {PartidoId} — Resultado: {Resultado}",
+                    notificacion.PartidoId, notificacion.ResultadoFinal);
 
-                // POST al endpoint de liquidación del servicio externo
-                var response = await _httpClient.PostAsync("/api/liquidar", content);
+                // POST al endpoint de liquidación de predicciones
+                var response = await _httpClient.PostAsync("/api/predicciones/liquidar", content);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -67,10 +67,39 @@ namespace UTNGolMundial.Consumer
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex,
-                    "[UTNGolCoin] Error inesperado al notificar Partido {PartidoId}.",
-                    notificacion.PartidoId);
+                _logger.LogError(ex, "Error inesperado al notificar Partido {PartidoId}.", notificacion.PartidoId);
                 return false;
+            }
+        }
+
+        public async Task NotificarRegistroAsync(int id, string username, string nombre, bool activo)
+        {
+            try
+            {
+                // Objeto anónimo para el payload
+                var payload = new
+                {
+                    id = id,
+                    username = username,
+                    nombre = nombre,
+                    activo = activo
+                };
+
+                var json = JsonConvert.SerializeObject(payload);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                // Enviar POST a usuarios registrar
+                var response = await _httpClient.PostAsync("/api/usuarios/registrar", content);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var cuerpoRespuesta = await response.Content.ReadAsStringAsync();
+                    _logger.LogError("Error al notificar registro de usuario {Username}. Respuesta: {Body}", username, cuerpoRespuesta);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al notificar registro de usuario {Username}.", username);
             }
         }
     }

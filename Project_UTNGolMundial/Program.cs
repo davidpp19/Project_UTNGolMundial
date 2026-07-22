@@ -52,7 +52,10 @@ namespace MiApi.UTNGolMundial
                 app.UseSwagger();
                 app.UseSwaggerUI(); //La interfaz de usuario de Swagger se habilita solo en desarrollo, por seguridad. En producción, es recomendable deshabilitarla para evitar exponer información sensible sobre la API.
             }
-            app.UseHttpsRedirection();
+            if (!app.Environment.IsDevelopment())
+            {
+                app.UseHttpsRedirection();
+            }  
             app.UseAuthorization();
             app.MapControllers();
             app.Run();

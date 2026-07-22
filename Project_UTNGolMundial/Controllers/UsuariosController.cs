@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Project_UTNGolMundial.Data;
 using UTNGolMundial.Modelos;
 using Project_UTNGolMundial.DTOs;
+using UTNGolMundial.Consumer;
 
 namespace Project_UTNGolMundial.Controllers
 {
@@ -16,10 +17,12 @@ namespace Project_UTNGolMundial.Controllers
     public class UsuariosController : ControllerBase
     {
         private readonly MiApiUTNGolMundialContext _context;
+        private readonly IUtnGolCoinClient _utnGolCoinClient;
 
-        public UsuariosController(MiApiUTNGolMundialContext context)
+        public UsuariosController(MiApiUTNGolMundialContext context, IUtnGolCoinClient utnGolCoinClient)
         {
             _context = context;
+            _utnGolCoinClient = utnGolCoinClient;
         }
 
         // GET: api/Usuarios
@@ -110,6 +113,9 @@ namespace Project_UTNGolMundial.Controllers
 
             _context.Usuarios.Add(usuario);
             await _context.SaveChangesAsync();
+
+            // Notificar registro al microservicio
+            await _utnGolCoinClient.NotificarRegistroAsync(usuario.Id, usuario.Username, usuario.Nombre, usuario.Activo);
 
             return CreatedAtAction("GetUsuario", new { id = usuario.Id }, usuario);
         }

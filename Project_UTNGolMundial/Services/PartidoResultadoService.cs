@@ -92,9 +92,7 @@ namespace Project_UTNGolMundial.Services
             var notificacion = new UTNGolMundial.Consumer.NotificacionResultadoDto
             {
                 PartidoId = partido.Id,
-                GolesLocal = partido.GolesLocal.Value,
-                GolesVisitante = partido.GolesVisitante.Value,
-                Resultado = DeterminarResultado(partido.GolesLocal.Value, partido.GolesVisitante.Value)
+                ResultadoFinal = DeterminarResultado(partido.GolesLocal.Value, partido.GolesVisitante.Value)
             };
 
             var notificado = await _golCoinClient.NotificarResultadoAsync(notificacion);
