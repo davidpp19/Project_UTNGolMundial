@@ -22,7 +22,7 @@ namespace UTNGolMundial.Modelos
         public string FaseCodigo { get; set; } //Clave foranea para relacionar con Fase
 
         [ForeignKey("GrupoCodigo")]
-        public char GrupoCodigo { get; set; } //Clave foranea para relacionar con Grupo
+        public char? GrupoCodigo { get; set; } //Clave foranea para relacionar con Grupo
 
         [ForeignKey("SedeId")]
         public int SedeId { get; set; } //Clave foranea para relacionar con Sede
