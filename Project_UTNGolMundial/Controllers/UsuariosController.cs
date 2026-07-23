@@ -115,7 +115,14 @@ namespace Project_UTNGolMundial.Controllers
             await _context.SaveChangesAsync();
 
             // Notificar registro al microservicio
-            await _utnGolCoinClient.NotificarRegistroAsync(usuario.Id, usuario.Username, usuario.Nombre, usuario.Mail, usuario.RolId, usuario.Activo);
+            try
+            {
+                await _utnGolCoinClient.NotificarRegistroAsync(usuario.Id, usuario.Username, usuario.Nombre, usuario.Mail, usuario.RolId, usuario.Activo);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Advertencia: Falló la notificación a Jakarta para el usuario {usuario.Username}. {ex.Message}");
+            }
 
             return CreatedAtAction("GetUsuario", new { id = usuario.Id }, usuario);
         }
