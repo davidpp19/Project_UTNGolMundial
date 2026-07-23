@@ -126,6 +126,7 @@ namespace Project_UTNGolMundial.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+                await SincronizarConJakartaAsync(partido, true);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -186,23 +187,7 @@ namespace Project_UTNGolMundial.Controllers
             _context.Partidos.Add(partido);
             await _context.SaveChangesAsync();
 
-            // Sincronización automática con Jakarta
-            try
-            {
-                var httpClient = _httpClientFactory.CreateClient();
-                var baseUrl = _configuration["ServiciosExternos:UTNGolCoinUrl"];
-                if (!string.IsNullOrEmpty(baseUrl))
-                {
-                    httpClient.BaseAddress = new Uri(baseUrl);
-                    var json = JsonSerializer.Serialize(partido);
-                    var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-                    await httpClient.PostAsync("api/partidos", content);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Advertencia: Falló la sincronización del partido {Id} con Jakarta.", partido.Id);
-            }
+            await SincronizarConJakartaAsync(partido, false);
 
             return CreatedAtAction("GetPartido", new { id = partido.Id }, partido);
         }
@@ -241,6 +226,8 @@ namespace Project_UTNGolMundial.Controllers
                 if (partido == null)
                     return NotFound(new { mensaje = $"No se encontró el partido con Id {id}." });
 
+                await SincronizarConJakartaAsync(partido, true);
+
                 return Ok(new
                 {
                     mensaje = "Resultado registrado exitosamente.",
@@ -263,6 +250,40 @@ namespace Project_UTNGolMundial.Controllers
         private bool PartidoExists(int id)
         {
             return _context.Partidos.Any(e => e.Id == id);
+        }
+
+        private async Task SincronizarConJakartaAsync(Partido partido, bool esActualizacion)
+        {
+            try
+            {
+                var httpClient = _httpClientFactory.CreateClient();
+                var baseUrl = _configuration["ServiciosExternos:UTNGolCoinUrl"];
+                
+                if (!string.IsNullOrEmpty(baseUrl))
+                {
+                    httpClient.BaseAddress = new Uri(baseUrl);
+                    
+                    var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+                    var json = JsonSerializer.Serialize(partido, options);
+                    var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+                    HttpResponseMessage response;
+                    if (esActualizacion)
+                    {
+                        response = await httpClient.PutAsync($"api/partidos/{partido.Id}", content);
+                    }
+                    else
+                    {
+                        response = await httpClient.PostAsync("api/partidos", content);
+                    }
+
+                    response.EnsureSuccessStatusCode();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Advertencia: Falló la sincronización del partido {Id} con Jakarta.", partido.Id);
+            }
         }
 
         // Limpia caracteres nulos ocultos (\0) que rompen PostgreSQL (Error 22021)
