@@ -67,6 +67,8 @@ namespace Project_UTNGolMundial.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPartido(int id, Partido partido)
         {
+            SanitizarPartido(partido);
+
             if (id != partido.Id)
             {
                 return BadRequest();
@@ -127,6 +129,8 @@ namespace Project_UTNGolMundial.Controllers
         [HttpPost]
         public async Task<ActionResult<Partido>> PostPartido(Partido partido)
         {
+            SanitizarPartido(partido);
+
             // Validación: Verificar que las selecciones no estén eliminadas
             var local = await _context.Selecciones.FindAsync(partido.LocalId);
             var visitante = await _context.Selecciones.FindAsync(partido.VisitanteId);
@@ -219,6 +223,20 @@ namespace Project_UTNGolMundial.Controllers
         private bool PartidoExists(int id)
         {
             return _context.Partidos.Any(e => e.Id == id);
+        }
+
+        // Limpia caracteres nulos ocultos (\0) que rompen PostgreSQL (Error 22021)
+        private void SanitizarPartido(Partido partido)
+        {
+            if (partido.FaseCodigo != null && partido.FaseCodigo.Contains('\0'))
+                partido.FaseCodigo = null!;
+
+            if (partido.Estado != null && partido.Estado.Contains('\0'))
+                partido.Estado = null!;
+
+            // GrupoCodigo es de tipo char (no nulable). Se asigna espacio en blanco para evitar el \0.
+            if (partido.GrupoCodigo == '\0')
+                partido.GrupoCodigo = ' ';
         }
     }
 }
