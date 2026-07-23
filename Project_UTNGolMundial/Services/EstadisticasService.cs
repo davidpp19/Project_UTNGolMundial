@@ -72,7 +72,7 @@ namespace Project_UTNGolMundial.Services
 
             // Traer todos los partidos finalizados de fase de grupos
             var partidosFinalizados = await _context.Partidos
-                .Where(p => p.Estado == "FINALIZADO")
+                .Where(p => p.Estado == "FINALIZADO" && p.FaseCodigo == "GRUPOS")
                 .AsNoTracking()
                 .ToListAsync();
 

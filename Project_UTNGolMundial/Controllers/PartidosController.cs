@@ -91,7 +91,6 @@ namespace Project_UTNGolMundial.Controllers
             try
             {
                 _validacionService.ValidarIdentidad(partido.LocalId, partido.VisitanteId);
-                await _validacionService.ValidarLímitePartidosFaseAsync(partido.FaseCodigo, partido.Id);
 
                 if (partido.FaseCodigo == "GRUPOS")
                 {

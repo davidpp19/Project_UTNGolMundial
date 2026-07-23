@@ -21,89 +21,58 @@ namespace UTNGolMundial.Consumer
 
         public async Task<bool> NotificarResultadoAsync(NotificacionResultadoDto notificacion)
         {
-            try
-            {
-                // Serializar con Newtonsoft.Json (consistente con el resto de la solución)
-                var json = JsonConvert.SerializeObject(notificacion);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
+            // Serializar con Newtonsoft.Json (consistente con el resto de la solución)
+            var json = JsonConvert.SerializeObject(notificacion);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
 
+            _logger.LogInformation(
+                "Enviando notificación para Partido {PartidoId} — Resultado: {Resultado}",
+                notificacion.PartidoId, notificacion.ResultadoFinal);
+
+            // POST al endpoint de liquidación de predicciones
+            var response = await _httpClient.PostAsync("api/predicciones/liquidar", content);
+
+            if (response.IsSuccessStatusCode)
+            {
                 _logger.LogInformation(
-                    "Enviando notificación para Partido {PartidoId} — Resultado: {Resultado}",
-                    notificacion.PartidoId, notificacion.ResultadoFinal);
+                    "[UTNGolCoin] Notificación exitosa para Partido {PartidoId}. HTTP {StatusCode}",
+                    notificacion.PartidoId, (int)response.StatusCode);
+                return true;
+            }
 
-                // POST al endpoint de liquidación de predicciones
-                var response = await _httpClient.PostAsync("api/predicciones/liquidar", content);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    _logger.LogInformation(
-                        "[UTNGolCoin] Notificación exitosa para Partido {PartidoId}. HTTP {StatusCode}",
-                        notificacion.PartidoId, (int)response.StatusCode);
-                    return true;
-                }
-
-                // La respuesta llegó pero con error (4xx / 5xx)
-                var cuerpoRespuesta = await response.Content.ReadAsStringAsync();
-                _logger.LogError(
-                    "[UTNGolCoin] Error HTTP {StatusCode} para Partido {PartidoId}. Respuesta: {Body}",
-                    (int)response.StatusCode, notificacion.PartidoId, cuerpoRespuesta);
-                return false;
-            }
-            catch (HttpRequestException ex)
-            {
-                // Error de red: servicio caído, DNS no resuelve, etc.
-                _logger.LogError(ex,
-                    "[UTNGolCoin] Error de red al notificar Partido {PartidoId}.",
-                    notificacion.PartidoId);
-                return false;
-            }
-            catch (TaskCanceledException ex)
-            {
-                // Timeout: el servicio tardó demasiado en responder
-                _logger.LogError(ex,
-                    "[UTNGolCoin] Timeout al notificar Partido {PartidoId}.",
-                    notificacion.PartidoId);
-                return false;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error inesperado al notificar Partido {PartidoId}.", notificacion.PartidoId);
-                return false;
-            }
+            // La respuesta llegó pero con error (4xx / 5xx)
+            var cuerpoRespuesta = await response.Content.ReadAsStringAsync();
+            _logger.LogError(
+                "[UTNGolCoin] Error HTTP {StatusCode} para Partido {PartidoId}. Respuesta: {Body}",
+                (int)response.StatusCode, notificacion.PartidoId, cuerpoRespuesta);
+            
+            throw new HttpRequestException($"El servicio UTNGolCoin respondió con HTTP {(int)response.StatusCode}.");
         }
 
         public async Task NotificarRegistroAsync(int id, string username, string nombre, string email, short rolId, bool activo)
         {
-            try
+            // Objeto anónimo para el payload
+            var payload = new
             {
-                // Objeto anónimo para el payload
-                var payload = new
-                {
-                    id = id,
-                    username = username,
-                    nombre = nombre,
-                    email = email,
-                    rolId = rolId,
-                    activo = activo
-                };
+                id = id,
+                username = username,
+                nombre = nombre,
+                email = email,
+                rolId = rolId,
+                activo = activo
+            };
 
-                var json = JsonConvert.SerializeObject(payload);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var json = JsonConvert.SerializeObject(payload);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                // Enviar POST a usuarios registrar
-                var response = await _httpClient.PostAsync("api/usuarios/registrar", content);
+            // Enviar POST a usuarios registrar
+            var response = await _httpClient.PostAsync("api/usuarios/registrar", content);
 
-                if (!response.IsSuccessStatusCode)
-                {
-                    var cuerpoRespuesta = await response.Content.ReadAsStringAsync();
-                    _logger.LogError("Error al notificar registro de usuario {Username}. Respuesta: {Body}", username, cuerpoRespuesta);
-                    throw new HttpRequestException($"Fallo la creación de la billetera en UTNGolCoin. El servicio respondió con HTTP {(int)response.StatusCode}.");
-                }
-            }
-            catch (Exception ex)
+            if (!response.IsSuccessStatusCode)
             {
-                _logger.LogError(ex, "Error al notificar registro de usuario {Username}.", username);
-                throw;
+                var cuerpoRespuesta = await response.Content.ReadAsStringAsync();
+                _logger.LogError("Error al notificar registro de usuario {Username}. Respuesta: {Body}", username, cuerpoRespuesta);
+                throw new HttpRequestException($"Fallo la creación de la billetera en UTNGolCoin. El servicio respondió con HTTP {(int)response.StatusCode}.");
             }
         }
     }
