@@ -1,6 +1,7 @@
 using System.Text;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace UTNGolMundial.Consumer
 {
@@ -21,8 +22,11 @@ namespace UTNGolMundial.Consumer
 
         public async Task<bool> NotificarResultadoAsync(NotificacionResultadoDto notificacion)
         {
-            // Serializar con Newtonsoft.Json (consistente con el resto de la solución)
-            var json = JsonConvert.SerializeObject(notificacion);
+            // Serializar con Newtonsoft.Json y forzar camelCase (Jakarta lo requiere)
+            var json = JsonConvert.SerializeObject(notificacion, new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            });
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             _logger.LogInformation(
