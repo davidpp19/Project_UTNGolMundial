@@ -32,21 +32,12 @@ namespace UTNGolMundial.Consumer
             // POST al endpoint de liquidación de predicciones
             var response = await _httpClient.PostAsync("api/predicciones/liquidar", content);
 
-            if (response.IsSuccessStatusCode)
-            {
-                _logger.LogInformation(
-                    "[UTNGolCoin] Notificación exitosa para Partido {PartidoId}. HTTP {StatusCode}",
-                    notificacion.PartidoId, (int)response.StatusCode);
-                return true;
-            }
+            response.EnsureSuccessStatusCode();
 
-            // La respuesta llegó pero con error (4xx / 5xx)
-            var cuerpoRespuesta = await response.Content.ReadAsStringAsync();
-            _logger.LogError(
-                "[UTNGolCoin] Error HTTP {StatusCode} para Partido {PartidoId}. Respuesta: {Body}",
-                (int)response.StatusCode, notificacion.PartidoId, cuerpoRespuesta);
-            
-            throw new HttpRequestException($"El servicio UTNGolCoin respondió con HTTP {(int)response.StatusCode}.");
+            _logger.LogInformation(
+                "[UTNGolCoin] Notificación exitosa para Partido {PartidoId}. HTTP {StatusCode}",
+                notificacion.PartidoId, (int)response.StatusCode);
+            return true;
         }
 
         public async Task NotificarRegistroAsync(int id, string username, string nombre, string email, short rolId, bool activo)
@@ -68,12 +59,7 @@ namespace UTNGolMundial.Consumer
             // Enviar POST a usuarios registrar
             var response = await _httpClient.PostAsync("api/usuarios/registrar", content);
 
-            if (!response.IsSuccessStatusCode)
-            {
-                var cuerpoRespuesta = await response.Content.ReadAsStringAsync();
-                _logger.LogError("Error al notificar registro de usuario {Username}. Respuesta: {Body}", username, cuerpoRespuesta);
-                throw new HttpRequestException($"Fallo la creación de la billetera en UTNGolCoin. El servicio respondió con HTTP {(int)response.StatusCode}.");
-            }
+            response.EnsureSuccessStatusCode();
         }
     }
 }
