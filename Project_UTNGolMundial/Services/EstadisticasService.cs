@@ -96,12 +96,34 @@ namespace Project_UTNGolMundial.Services
                     }
                 }
 
-                // Ordenar: Puntos desc : Diferencia de Goles desc : Goles a Favor desc
-                posiciones = posiciones
-                    .OrderByDescending(p => p.Pts)
-                    .ThenByDescending(p => p.DG)
-                    .ThenByDescending(p => p.GF)
-                    .ToList();
+                // Ordenar: Puntos desc : Diferencia de Goles desc : Goles a Favor desc : Enfrentamiento directo
+                posiciones.Sort((a, b) =>
+                {
+                    if (a.Pts != b.Pts) return b.Pts.CompareTo(a.Pts);
+                    if (a.DG != b.DG) return b.DG.CompareTo(a.DG);
+                    if (a.GF != b.GF) return b.GF.CompareTo(a.GF);
+
+                    // Desempate H2H (Enfrentamiento directo)
+                    var partidoDirecto = partidosDelGrupo.FirstOrDefault(p =>
+                        (p.LocalId == a.SeleccionId && p.VisitanteId == b.SeleccionId) ||
+                        (p.LocalId == b.SeleccionId && p.VisitanteId == a.SeleccionId));
+
+                    if (partidoDirecto != null)
+                    {
+                        if (partidoDirecto.LocalId == a.SeleccionId)
+                        {
+                            if (partidoDirecto.GolesLocal > partidoDirecto.GolesVisitante) return -1; // 'a' gana
+                            if (partidoDirecto.GolesLocal < partidoDirecto.GolesVisitante) return 1;  // 'b' gana
+                        }
+                        else
+                        {
+                            if (partidoDirecto.GolesVisitante > partidoDirecto.GolesLocal) return -1; // 'a' gana
+                            if (partidoDirecto.GolesVisitante < partidoDirecto.GolesLocal) return 1;  // 'b' gana
+                        }
+                    }
+
+                    return 0;
+                });
 
                 resultado.Add(new TablaPosicionGrupoDto
                 {

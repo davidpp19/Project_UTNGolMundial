@@ -54,12 +54,34 @@ namespace Project_UTNGolMundial.Services
                 partido.Estado
             });
 
-            // 4. Registrar el resultado
+            // 4. Validación de no empates en eliminatorias
+            if (partido.FaseCodigo != "G" && dto.GolesLocal == dto.GolesVisitante)
+            {
+                throw new InvalidOperationException("Un partido de fase eliminatoria no puede terminar en empate. Debes registrar el marcador final definitivo (incluyendo penales/prórroga si aplica).");
+            }
+
+            // 5. Progresión estricta: Eliminar al perdedor en eliminatorias
+            if (partido.FaseCodigo != "G")
+            {
+                var local = await _context.Selecciones.FindAsync(partido.LocalId);
+                var visitante = await _context.Selecciones.FindAsync(partido.VisitanteId);
+
+                if (dto.GolesLocal > dto.GolesVisitante && visitante != null)
+                {
+                    visitante.Eliminada = true;
+                }
+                else if (dto.GolesVisitante > dto.GolesLocal && local != null)
+                {
+                    local.Eliminada = true;
+                }
+            }
+
+            // 6. Registrar el resultado
             partido.GolesLocal = dto.GolesLocal;
             partido.GolesVisitante = dto.GolesVisitante;
             partido.Estado = "FINALIZADO";
 
-            // 5. Capturar datos nuevos para la auditoría
+            // 7. Capturar datos nuevos para la auditoría
             var datosNuevos = JsonConvert.SerializeObject(new
             {
                 partido.GolesLocal,
@@ -67,7 +89,7 @@ namespace Project_UTNGolMundial.Services
                 partido.Estado
             });
 
-            // 6. Crear registro de auditoría automáticamente
+            // 8. Crear registro de auditoría automáticamente
             var auditoria = new Auditoria
             {
                 TablaAfectada = "Partidos",
@@ -80,14 +102,14 @@ namespace Project_UTNGolMundial.Services
             };
             _context.Auditorias.Add(auditoria);
 
-            // 7. Guardar todo en una sola transacción (resultado + auditoría)
+            // 9. Guardar todo en una sola transacción (resultado + auditoría + selecciones eliminadas)
             await _context.SaveChangesAsync();
 
             _logger.LogInformation(
                 "Resultado registrado para partido {PartidoId}: Local {GolesLocal} - Visitante {GolesVisitante}. Auditoría creada.",
                 partidoId, dto.GolesLocal, dto.GolesVisitante);
 
-            // 8. Notificar al Servicio UTNGolCoin (RF12) — mediante el proyecto Consumer
+            // 10. Notificar al Servicio UTNGolCoin (RF12) — mediante el proyecto Consumer
             // Se construye el DTO del Consumer (UTNGolMundial.Consumer.NotificacionResultadoDto)
             var notificacion = new UTNGolMundial.Consumer.NotificacionResultadoDto
             {

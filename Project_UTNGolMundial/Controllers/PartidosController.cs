@@ -19,15 +19,18 @@ namespace Project_UTNGolMundial.Controllers
         private readonly MiApiUTNGolMundialContext _context;
         private readonly IPartidoResultadoService _resultadoService;
         private readonly IEstadisticasService _estadisticasService;
+        private readonly ITorneoValidacionService _validacionService;
 
         public PartidosController(
             MiApiUTNGolMundialContext context, 
             IPartidoResultadoService resultadoService,
-            IEstadisticasService estadisticasService)
+            IEstadisticasService estadisticasService,
+            ITorneoValidacionService validacionService)
         {
             _context = context;
             _resultadoService = resultadoService;
             _estadisticasService = estadisticasService;
+            _validacionService = validacionService;
         }
 
         // GET: api/Partidos
@@ -78,6 +81,26 @@ namespace Project_UTNGolMundial.Controllers
             if (visitante != null && visitante.Eliminada)
                 return BadRequest(new { mensaje = $"La selección {visitante.Nombre} está eliminada del torneo." });
 
+            try
+            {
+                _validacionService.ValidarIdentidad(partido.LocalId, partido.VisitanteId);
+
+                if (partido.FaseCodigo == "G")
+                {
+                    await _validacionService.ValidarMaximoPartidosGrupoAsync(partido.LocalId, partido.Id);
+                    await _validacionService.ValidarMaximoPartidosGrupoAsync(partido.VisitanteId, partido.Id);
+                }
+                else
+                {
+                    await _validacionService.ValidarUnicidadFaseEliminatoriaAsync(partido.FaseCodigo, partido.LocalId, partido.Id);
+                    await _validacionService.ValidarUnicidadFaseEliminatoriaAsync(partido.FaseCodigo, partido.VisitanteId, partido.Id);
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message });
+            }
+
             _context.Entry(partido).State = EntityState.Modified;
 
             try
@@ -111,6 +134,26 @@ namespace Project_UTNGolMundial.Controllers
                 return BadRequest(new { mensaje = $"La selección {local.Nombre} está eliminada del torneo." });
             if (visitante != null && visitante.Eliminada)
                 return BadRequest(new { mensaje = $"La selección {visitante.Nombre} está eliminada del torneo." });
+
+            try
+            {
+                _validacionService.ValidarIdentidad(partido.LocalId, partido.VisitanteId);
+
+                if (partido.FaseCodigo == "G")
+                {
+                    await _validacionService.ValidarMaximoPartidosGrupoAsync(partido.LocalId);
+                    await _validacionService.ValidarMaximoPartidosGrupoAsync(partido.VisitanteId);
+                }
+                else
+                {
+                    await _validacionService.ValidarUnicidadFaseEliminatoriaAsync(partido.FaseCodigo, partido.LocalId);
+                    await _validacionService.ValidarUnicidadFaseEliminatoriaAsync(partido.FaseCodigo, partido.VisitanteId);
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { mensaje = ex.Message });
+            }
 
             _context.Partidos.Add(partido);
             await _context.SaveChangesAsync();

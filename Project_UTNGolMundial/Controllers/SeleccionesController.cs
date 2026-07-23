@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,10 +15,12 @@ namespace Project_UTNGolMundial.Controllers
     public class SeleccionesController : ControllerBase
     {
         private readonly MiApiUTNGolMundialContext _context;
+        private readonly Project_UTNGolMundial.Services.ITorneoValidacionService _validacionService;
 
-        public SeleccionesController(MiApiUTNGolMundialContext context)
+        public SeleccionesController(MiApiUTNGolMundialContext context, Project_UTNGolMundial.Services.ITorneoValidacionService validacionService)
         {
             _context = context;
+            _validacionService = validacionService;
         }
 
         // GET: api/Selecciones
@@ -51,6 +53,18 @@ namespace Project_UTNGolMundial.Controllers
                 return BadRequest();
             }
 
+            if (seleccion.GrupoCodigo != default(char) && seleccion.GrupoCodigo != ' ')
+            {
+                try
+                {
+                    await _validacionService.ValidarLímitesGrupoAsync(seleccion.Id, seleccion.GrupoCodigo);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    return BadRequest(new { mensaje = ex.Message });
+                }
+            }
+
             _context.Entry(seleccion).State = EntityState.Modified;
 
             try
@@ -76,6 +90,18 @@ namespace Project_UTNGolMundial.Controllers
         [HttpPost]
         public async Task<ActionResult<Seleccion>> PostSeleccion(Seleccion seleccion)
         {
+            if (seleccion.GrupoCodigo != default(char) && seleccion.GrupoCodigo != ' ')
+            {
+                try
+                {
+                    await _validacionService.ValidarLímitesGrupoAsync(seleccion.Id, seleccion.GrupoCodigo);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    return BadRequest(new { mensaje = ex.Message });
+                }
+            }
+
             _context.Selecciones.Add(seleccion);
             await _context.SaveChangesAsync();
 

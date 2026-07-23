@@ -30,6 +30,7 @@ namespace MiApi.UTNGolMundial
             // Servicios de negocio (Estadísticas y Registro de Resultados) 
             builder.Services.AddScoped<IEstadisticasService, EstadisticasService>();
             builder.Services.AddScoped<IPartidoResultadoService, PartidoResultadoService>();
+            builder.Services.AddScoped<ITorneoValidacionService, TorneoValidacionService>();
 
             // HTTP Client — Servicio UTNGolCoin (RF12) 
             // Registra el Typed Client del proyecto UTNGolMundial.Consumer.
