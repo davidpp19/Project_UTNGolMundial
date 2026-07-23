@@ -75,5 +75,35 @@ namespace Project_UTNGolMundial.Services
                 throw new InvalidOperationException($"La selección con ID {seleccionId} ya está registrada en un partido de la fase {faseCodigo}. No puede jugar dos partidos en la misma fase eliminatoria.");
             }
         }
+        public async Task ValidarLímitePartidosFaseAsync(string faseCodigo, int? excluyendoPartidoId = null)
+        {
+            var fase = await _context.Fases.FindAsync(faseCodigo);
+            if (fase == null) return;
+
+            int maxPartidos = fase.Nombre.ToLower() switch
+            {
+                var n when n.Contains("grupo") => 72,
+                var n when n.Contains("dieciseisavos") => 16,
+                var n when n.Contains("octavos") => 8,
+                var n when n.Contains("cuartos") => 4,
+                var n when n.Contains("semifinal") => 2,
+                var n when n.Contains("tercer") => 1,
+                var n when n.Contains("final") => 1,
+                _ => int.MaxValue
+            };
+
+            var query = _context.Partidos.Where(p => p.FaseCodigo == faseCodigo);
+            if (excluyendoPartidoId.HasValue)
+            {
+                query = query.Where(p => p.Id != excluyendoPartidoId.Value);
+            }
+
+            var conteo = await query.CountAsync();
+
+            if (conteo >= maxPartidos)
+            {
+                throw new InvalidOperationException($"La fase '{fase.Nombre}' ya ha alcanzado su límite máximo de {maxPartidos} partidos programados.");
+            }
+        }
     }
 }

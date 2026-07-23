@@ -84,6 +84,7 @@ namespace Project_UTNGolMundial.Controllers
             try
             {
                 _validacionService.ValidarIdentidad(partido.LocalId, partido.VisitanteId);
+                await _validacionService.ValidarLímitePartidosFaseAsync(partido.FaseCodigo, partido.Id);
 
                 if (partido.FaseCodigo == "G")
                 {
@@ -138,6 +139,7 @@ namespace Project_UTNGolMundial.Controllers
             try
             {
                 _validacionService.ValidarIdentidad(partido.LocalId, partido.VisitanteId);
+                await _validacionService.ValidarLímitePartidosFaseAsync(partido.FaseCodigo);
 
                 if (partido.FaseCodigo == "G")
                 {
