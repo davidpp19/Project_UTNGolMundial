@@ -32,7 +32,7 @@ namespace UTNGolMundial.Consumer
                     notificacion.PartidoId, notificacion.ResultadoFinal);
 
                 // POST al endpoint de liquidación de predicciones
-                var response = await _httpClient.PostAsync("/api/predicciones/liquidar", content);
+                var response = await _httpClient.PostAsync("api/predicciones/liquidar", content);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -91,17 +91,19 @@ namespace UTNGolMundial.Consumer
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
                 // Enviar POST a usuarios registrar
-                var response = await _httpClient.PostAsync("/api/usuarios/registrar", content);
+                var response = await _httpClient.PostAsync("api/usuarios/registrar", content);
 
                 if (!response.IsSuccessStatusCode)
                 {
                     var cuerpoRespuesta = await response.Content.ReadAsStringAsync();
                     _logger.LogError("Error al notificar registro de usuario {Username}. Respuesta: {Body}", username, cuerpoRespuesta);
+                    throw new HttpRequestException($"Fallo la creación de la billetera en UTNGolCoin. El servicio respondió con HTTP {(int)response.StatusCode}.");
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error al notificar registro de usuario {Username}.", username);
+                throw;
             }
         }
     }
