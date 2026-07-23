@@ -55,13 +55,13 @@ namespace Project_UTNGolMundial.Services
             });
 
             // 4. Validación de no empates en eliminatorias
-            if (partido.FaseCodigo != "G" && dto.GolesLocal == dto.GolesVisitante)
+            if (partido.FaseCodigo != "GRUPOS" && dto.GolesLocal == dto.GolesVisitante)
             {
                 throw new InvalidOperationException("Un partido de fase eliminatoria no puede terminar en empate. Debes registrar el marcador final definitivo (incluyendo penales/prórroga si aplica).");
             }
 
             // 5. Progresión estricta: Eliminar al perdedor en eliminatorias
-            if (partido.FaseCodigo != "G")
+            if (partido.FaseCodigo != "GRUPOS")
             {
                 var local = await _context.Selecciones.FindAsync(partido.LocalId);
                 var visitante = await _context.Selecciones.FindAsync(partido.VisitanteId);

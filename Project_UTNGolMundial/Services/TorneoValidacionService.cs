@@ -38,7 +38,7 @@ namespace Project_UTNGolMundial.Services
         {
             // Cada equipo debe jugar máximo 3 partidos en fase de grupos.
             var query = _context.Partidos.Where(p => 
-                p.FaseCodigo == "G" && 
+                p.FaseCodigo == "GRUPOS" && 
                 (p.LocalId == seleccionId || p.VisitanteId == seleccionId));
             
             if (excluyendoPartidoId.HasValue)
@@ -57,7 +57,7 @@ namespace Project_UTNGolMundial.Services
         public async Task ValidarUnicidadFaseEliminatoriaAsync(string faseCodigo, int seleccionId, int? excluyendoPartidoId = null)
         {
             // No validar si es fase de grupos
-            if (faseCodigo == "G") return;
+            if (faseCodigo == "GRUPOS") return;
 
             var query = _context.Partidos.Where(p => 
                 p.FaseCodigo == faseCodigo && 

@@ -86,7 +86,7 @@ namespace Project_UTNGolMundial.Controllers
                 _validacionService.ValidarIdentidad(partido.LocalId, partido.VisitanteId);
                 await _validacionService.ValidarLímitePartidosFaseAsync(partido.FaseCodigo, partido.Id);
 
-                if (partido.FaseCodigo == "G")
+                if (partido.FaseCodigo == "GRUPOS")
                 {
                     await _validacionService.ValidarMaximoPartidosGrupoAsync(partido.LocalId, partido.Id);
                     await _validacionService.ValidarMaximoPartidosGrupoAsync(partido.VisitanteId, partido.Id);
@@ -141,7 +141,7 @@ namespace Project_UTNGolMundial.Controllers
                 _validacionService.ValidarIdentidad(partido.LocalId, partido.VisitanteId);
                 await _validacionService.ValidarLímitePartidosFaseAsync(partido.FaseCodigo);
 
-                if (partido.FaseCodigo == "G")
+                if (partido.FaseCodigo == "GRUPOS")
                 {
                     await _validacionService.ValidarMaximoPartidosGrupoAsync(partido.LocalId);
                     await _validacionService.ValidarMaximoPartidosGrupoAsync(partido.VisitanteId);
