@@ -9,6 +9,10 @@ using Project_UTNGolMundial.Data;
 using Project_UTNGolMundial.DTOs;
 using Project_UTNGolMundial.Services;
 using UTNGolMundial.Modelos;
+using System.Net.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace Project_UTNGolMundial.Controllers
 {
@@ -20,17 +24,26 @@ namespace Project_UTNGolMundial.Controllers
         private readonly IPartidoResultadoService _resultadoService;
         private readonly IEstadisticasService _estadisticasService;
         private readonly ITorneoValidacionService _validacionService;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _configuration;
+        private readonly ILogger<PartidosController> _logger;
 
         public PartidosController(
             MiApiUTNGolMundialContext context, 
             IPartidoResultadoService resultadoService,
             IEstadisticasService estadisticasService,
-            ITorneoValidacionService validacionService)
+            ITorneoValidacionService validacionService,
+            IHttpClientFactory httpClientFactory,
+            IConfiguration configuration,
+            ILogger<PartidosController> logger)
         {
             _context = context;
             _resultadoService = resultadoService;
             _estadisticasService = estadisticasService;
             _validacionService = validacionService;
+            _httpClientFactory = httpClientFactory;
+            _configuration = configuration;
+            _logger = logger;
         }
 
         // GET: api/Partidos
@@ -172,6 +185,24 @@ namespace Project_UTNGolMundial.Controllers
 
             _context.Partidos.Add(partido);
             await _context.SaveChangesAsync();
+
+            // Sincronización automática con Jakarta
+            try
+            {
+                var httpClient = _httpClientFactory.CreateClient();
+                var baseUrl = _configuration["ServiciosExternos:UTNGolCoinUrl"];
+                if (!string.IsNullOrEmpty(baseUrl))
+                {
+                    httpClient.BaseAddress = new Uri(baseUrl);
+                    var json = JsonSerializer.Serialize(partido);
+                    var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+                    await httpClient.PostAsync("api/partidos", content);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Advertencia: Falló la sincronización del partido {Id} con Jakarta.", partido.Id);
+            }
 
             return CreatedAtAction("GetPartido", new { id = partido.Id }, partido);
         }
