@@ -127,6 +127,11 @@ namespace Project_UTNGolMundial.Controllers
             {
                 await _context.SaveChangesAsync();
                 await SincronizarConJakartaAsync(partido, true);
+
+                if (partido.Estado == "FINALIZADO" && partido.GolesLocal.HasValue && partido.GolesVisitante.HasValue)
+                {
+                    await LiquidarPrediccionesAsync(partido);
+                }
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -283,6 +288,34 @@ namespace Project_UTNGolMundial.Controllers
             catch (Exception ex)
             {
                 _logger.LogWarning(ex, "Advertencia: Falló la sincronización del partido {Id} con Jakarta.", partido.Id);
+            }
+        }
+
+        private async Task LiquidarPrediccionesAsync(Partido partido)
+        {
+            try
+            {
+                var httpClient = _httpClientFactory.CreateClient();
+                var baseUrl = _configuration["ServiciosExternos:UTNGolCoinUrl"];
+                
+                if (!string.IsNullOrEmpty(baseUrl))
+                {
+                    httpClient.BaseAddress = new Uri(baseUrl);
+                    
+                    var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+                    string resultadoStr = partido.GolesLocal > partido.GolesVisitante ? "1" : (partido.GolesLocal < partido.GolesVisitante ? "2" : "X");
+                    var payload = new { partidoId = partido.Id, resultadoFinal = resultadoStr };
+                    
+                    var json = JsonSerializer.Serialize(payload, options);
+                    var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+                    var response = await httpClient.PostAsync("api/predicciones/liquidar", content);
+                    response.EnsureSuccessStatusCode();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Advertencia: Falló la liquidación del partido {Id} en Jakarta.", partido.Id);
             }
         }
 
