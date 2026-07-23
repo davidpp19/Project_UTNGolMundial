@@ -121,7 +121,7 @@ namespace Project_UTNGolMundial.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Advertencia: Falló la notificación a Jakarta para el usuario {usuario.Username}. {ex.Message}");
+                Console.WriteLine($"Advertencia: Falló la creación de la billetera en Jakarta para el usuario {usuario.Username}. Detalle: {ex.Message}");
             }
 
             return CreatedAtAction("GetUsuario", new { id = usuario.Id }, usuario);
