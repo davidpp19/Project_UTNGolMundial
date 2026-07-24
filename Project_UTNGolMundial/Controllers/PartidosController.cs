@@ -269,7 +269,11 @@ namespace Project_UTNGolMundial.Controllers
                 {
                     httpClient.BaseAddress = new Uri(baseUrl);
                     
-                    var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+                    var options = new JsonSerializerOptions 
+                    { 
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
+                    };
                     var json = JsonSerializer.Serialize(partido, options);
                     var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
