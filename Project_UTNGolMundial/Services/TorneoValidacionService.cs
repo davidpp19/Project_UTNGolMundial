@@ -105,5 +105,21 @@ namespace Project_UTNGolMundial.Services
                 throw new InvalidOperationException($"La fase '{fase.Nombre}' ya ha alcanzado su límite máximo de {maxPartidos} partidos programados.");
             }
         }
+
+        public async Task ValidarProgresionFasesAsync(string faseCodigo)
+        {
+            var fase = await _context.Fases.FindAsync(faseCodigo);
+            if (fase == null || fase.Orden <= 1) return;
+
+            var faseAnterior = await _context.Fases.FirstOrDefaultAsync(f => f.Orden == fase.Orden - 1);
+            if (faseAnterior == null) return;
+
+            var partidosAnteriores = await _context.Partidos.Where(p => p.FaseCodigo == faseAnterior.Codigo).ToListAsync();
+
+            if (!partidosAnteriores.Any() || partidosAnteriores.Any(p => p.Estado != "FINALIZADO"))
+            {
+                throw new InvalidOperationException($"No se puede crear un partido de {fase.Nombre} hasta que termine {faseAnterior.Nombre}.");
+            }
+        }
     }
 }

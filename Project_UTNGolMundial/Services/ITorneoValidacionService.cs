@@ -10,5 +10,6 @@ namespace Project_UTNGolMundial.Services
         Task ValidarMaximoPartidosGrupoAsync(int seleccionId, int? excluyendoPartidoId = null);
         Task ValidarUnicidadFaseEliminatoriaAsync(string faseCodigo, int seleccionId, int? excluyendoPartidoId = null);
         Task ValidarLímitePartidosFaseAsync(string faseCodigo, int? excluyendoPartidoId = null);
+        Task ValidarProgresionFasesAsync(string faseCodigo);
     }
 }
